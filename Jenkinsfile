@@ -1,16 +1,17 @@
-<suite name="SingleSuite" verbose="2" thread-count="4">
- 
-  <parameter name="n" value="42" />
- 
-  <test name="Regression2">
-    <groups>
-      <run>
-        <exclude name="broken" />
-      </run>
-    </groups>
- 
-    <classes>
-      <class name="test.listeners.ResultEndMillisTest" />
-    </classes>
-  </test>
-</suite>
+node {
+   def commit_id
+   stage('Preparation') {
+     checkout scm
+     sh "git rev-parse --short HEAD > .git/commit-id"                        
+     commit_id = readFile('.git/commit-id').trim()
+   }
+   stage('test') {
+     nodejs(nodeJSInstallationName: 'nodejs') {
+       sh 'npm install --only=dev'
+       sh 'npm test'
+     }
+   }
+   stage('docker build/push') {
+   echo "runing"
+   }
+}
